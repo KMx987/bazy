@@ -1,40 +1,56 @@
 package pl.upsanok.tablab1excercise.controllers;
 
-
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.upsanok.tablab1excercise.controllers.dto.Flower;
+import pl.upsanok.tablab1excercise.services.FlowersService;
 
-@RestController()
-@CrossOrigin(origins = {"http://localhost:3000", "https://tab-front-production.up.railway.app"})
+import java.util.List;
+
+@RestController
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class FlowersImprovedController {
 
-  @Autowired
-  private FlowersService flowersService;
+    @Autowired
+    private final FlowersService flowersService;
 
-  @GetMapping("flowers/fav/users/{userName}")
-  public ResponseEntity<Flower> getFavForUser(
-      @PathVariable String userName
-  ) {
-    var result = flowersService.getFavouriteFlowerForUser(userName);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/flowers")
+    public ResponseEntity<List<Flower>> getName() {
+        var flowers = flowersService.getAllFlowers();
+        return ResponseEntity.ok(flowers);
+    }
 
-  @PostMapping("flowers/fav/users/{userName}")
-  public ResponseEntity<Flower> setNewFavForUser(
-      @PathVariable String userName,
-      @RequestBody Flower flower
-  ) {
-    boolean result = flowersService.saveFavouriteFlowerFor(userName, flower.name());
-    return ResponseEntity.ok(Flower.builder().name("testowa").build());
-  }
+
+    @GetMapping({"/users/{userName}/garden", "/flowers/fav/users/{userName}"})
+    public ResponseEntity<List<Flower>> getFavForUser(
+            @PathVariable String userName
+    ) {
+        var result = flowersService.getFavouriteFlowerForUser(userName);
+
+        if (result == null || result.name() == null) {
+            return ResponseEntity.ok(List.of());
+        }
+
+        return ResponseEntity.ok(List.of(result));
+    }
+
+    @PostMapping({"/users/{userName}/garden", "/flowers/fav/users/{userName}"})
+    public ResponseEntity<Flower> setNewFavForUser(
+            @PathVariable String userName,
+            @RequestBody Flower flower
+    ) {
+        flowersService.saveFavouriteFlowerFor(userName, flower.name());
+        return ResponseEntity.ok(flower);
+
+    }
+
+    @GetMapping("/flowers/{userName}")
+    public ResponseEntity<Flower> getSingleFavFlower(@PathVariable String userName) {
+        var result = flowersService.getFavouriteFlowerForUser(userName);
+        return ResponseEntity.ok(result);
+    }
 }
 

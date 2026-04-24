@@ -4,6 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record Flower(
+
+    Integer id,
     String name
 ) {
 }
