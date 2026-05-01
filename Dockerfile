@@ -1,3 +1,3 @@
-FROM postgres
-ENV POSTGRES_DB="flowers-postgres"
+FROM mysql
+ENV MYSQL_DATABASE="flowers-mysql"
 COPY dane.sql /docker-entrypoint-initdb.d/
