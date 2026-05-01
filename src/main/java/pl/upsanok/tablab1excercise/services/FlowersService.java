@@ -32,26 +32,21 @@ public class FlowersService {
     }
 
     public Flower getFavouriteFlowerForUser(String userName) {
-        try {
-            UserEntity user = usersRepository.findAll().stream()
-                    .filter(u -> u.getName().equalsIgnoreCase(userName))
-                    .findFirst()
-                    .orElse(null);
+        UserEntity user = usersRepository.findAll().stream()
+                .filter(u -> u.getName().equalsIgnoreCase(userName))
+                .findFirst()
+                .orElse(null);
 
-            if (user == null || user.getFavouriteFlowerId() == null) {
-                return Flower.builder().build();
-            }
-
-            return flowersRepository.findById(user.getFavouriteFlowerId())
-                    .map(entity -> Flower.builder()
-                            .id(entity.getId())
-                            .name(entity.getName())
-                            .build())
-                    .orElse(Flower.builder().build());
-        } catch (Exception e) {
-            System.err.println("Błąd w getFavouriteFlowerForUser: " + e.getMessage());
+        if (user == null || user.getFavouriteFlowerId() == null) {
             return Flower.builder().build();
         }
+
+        return flowersRepository.findById(user.getFavouriteFlowerId())
+                .map(entity -> Flower.builder()
+                        .id(entity.getId())
+                        .name(entity.getName())
+                        .build())
+                .orElseGet(() -> Flower.builder().build());
     }
 
     public boolean saveFavouriteFlowerFor(String userName, String flowerName) {
@@ -73,6 +68,9 @@ public class FlowersService {
             user = new UserEntity();
             user.setName(userName);
             user.setFavouriteFlowerId(flower.getId());
+
+            int nextId = (int) (usersRepository.count() + 1);
+            user.setId(nextId);
         }
 
         usersRepository.save(user);

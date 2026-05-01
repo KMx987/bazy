@@ -1,7 +1,5 @@
 package pl.upsanok.tablab1excercise.controllers;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.upsanok.tablab1excercise.controllers.dto.Flower;
@@ -11,40 +9,43 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@AllArgsConstructor
 public class FlowersImprovedController {
 
-    @Autowired
     private final FlowersService flowersService;
+
+    public FlowersImprovedController(FlowersService flowersService) {
+        this.flowersService = flowersService;
+    }
 
     @GetMapping("/flowers")
     public ResponseEntity<List<Flower>> getName() {
-        var flowers = flowersService.getAllFlowers();
-        return ResponseEntity.ok(flowers);
+        return ResponseEntity.ok(flowersService.getAllFlowers());
     }
 
-
-    @GetMapping({"/users/{userName}/garden", "/flowers/fav/users/{userName}"})
-    public ResponseEntity<List<Flower>> getFavForUser(
-            @PathVariable String userName
-    ) {
+    @GetMapping("/flowers/fav/users/{userName}")
+    public ResponseEntity<Flower> getFavForUser(@PathVariable String userName) {
         var result = flowersService.getFavouriteFlowerForUser(userName);
 
-        if (result == null || result.name() == null) {
-            return ResponseEntity.ok(List.of());
-        }
-
-        return ResponseEntity.ok(List.of(result));
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping({"/users/{userName}/garden", "/flowers/fav/users/{userName}"})
+    @PostMapping("/flowers/fav/users/{userName}")
     public ResponseEntity<Flower> setNewFavForUser(
             @PathVariable String userName,
             @RequestBody Flower flower
     ) {
         flowersService.saveFavouriteFlowerFor(userName, flower.name());
         return ResponseEntity.ok(flower);
+    }
 
+    @GetMapping("/users/{userName}/garden")
+    public ResponseEntity<List<Flower>> getGardenForUser(@PathVariable String userName) {
+        return ResponseEntity.ok(List.of());
+    }
+
+    @PostMapping("/users/{userName}/garden")
+    public ResponseEntity<Flower> plantInGarden(@PathVariable String userName, @RequestBody Flower flower) {
+        return ResponseEntity.ok(flower);
     }
 
     @GetMapping("/flowers/{userName}")
@@ -53,4 +54,3 @@ public class FlowersImprovedController {
         return ResponseEntity.ok(result);
     }
 }
-
