@@ -15,6 +15,15 @@ CREATE TABLE users (
         REFERENCES flowers(flowers_id)
 );
 
+CREATE TABLE garden (
+    user_id INT NOT NULL,
+    flower_id INT NOT NULL,
+    PRIMARY KEY (user_id, flower_id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(users_id),
+    CONSTRAINT fk_flower FOREIGN KEY (flower_id) REFERENCES flowers(flowers_id)
+);
+
+
 INSERT INTO flowers (flowers_id, flowers_name) VALUES 
     (1, 'Bratek'),
     (2, 'Stokrotka'),

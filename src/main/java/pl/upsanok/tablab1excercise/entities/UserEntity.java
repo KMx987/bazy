@@ -1,9 +1,16 @@
 package pl.upsanok.tablab1excercise.entities;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
 public class UserEntity {
 
     @Id
@@ -13,8 +20,9 @@ public class UserEntity {
     @Column(name = "users_name")
     private String name;
 
-    @Column(name = "users_favourite_flower_id")
-    private Integer favouriteFlowerId;
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
+    @JoinColumn(name = "users_favourite_flower_id")
+    private FlowerEntity favouriteFlower;
 
     public Integer getId() {
         return id;
@@ -32,11 +40,11 @@ public class UserEntity {
         this.name = name;
     }
 
-    public Integer getFavouriteFlowerId() {
-        return favouriteFlowerId;
+    public FlowerEntity getFavouriteFlower() {
+        return favouriteFlower;
     }
 
-    public void setFavouriteFlowerId(Integer favouriteFlowerId) {
-        this.favouriteFlowerId = favouriteFlowerId;
+    public void setFavouriteFlower(FlowerEntity favouriteFlower) {
+        this.favouriteFlower = favouriteFlower;
     }
 }

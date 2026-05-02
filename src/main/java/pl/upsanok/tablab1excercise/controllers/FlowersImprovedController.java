@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.upsanok.tablab1excercise.controllers.dto.Flower;
 import pl.upsanok.tablab1excercise.services.FlowersService;
-
 import java.util.List;
 
 @RestController
@@ -38,12 +37,12 @@ public class FlowersImprovedController {
         return ResponseEntity.ok(flower);
     }
 
-    @GetMapping("/users/{userName}/garden")
+    //@GetMapping("/users/{userName}/garden")
     public ResponseEntity<List<Flower>> getGardenForUser(@PathVariable String userName) {
         return ResponseEntity.ok(List.of());
     }
 
-    @PostMapping("/users/{userName}/garden")
+    //@PostMapping("/users/{userName}/garden")
     public ResponseEntity<Flower> plantInGarden(@PathVariable String userName, @RequestBody Flower flower) {
         return ResponseEntity.ok(flower);
     }
