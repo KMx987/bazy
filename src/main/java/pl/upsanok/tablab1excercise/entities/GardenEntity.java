@@ -9,16 +9,21 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Builder
-@IdClass(GardenId.class)
+//@IdClass(GardenId.class) // opcja 1 - IdClass
 public class GardenEntity {
-    @Id
+
+    @EmbeddedId // opcja 2 - EmbeddedId
+    private GardenIdEmbedded gardenId;
+
+    //@Id
     @ManyToOne
+    @MapsId("flowerId")
     @JoinColumn(name = "flower_id")
     private FlowerEntity flowerEntity;
 
-    @Id
+    //@Id
     @ManyToOne
+    @MapsId("userId")
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
-
 }

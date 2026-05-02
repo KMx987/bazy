@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.upsanok.tablab1excercise.controllers.dto.Flower;
 import pl.upsanok.tablab1excercise.entities.FlowerEntity;
 import pl.upsanok.tablab1excercise.entities.GardenEntity;
+import pl.upsanok.tablab1excercise.entities.GardenIdEmbedded;
 import pl.upsanok.tablab1excercise.entities.UserEntity;
 import pl.upsanok.tablab1excercise.repositories.FlowersRepository;
 import pl.upsanok.tablab1excercise.repositories.GardenRepository;
@@ -116,12 +117,16 @@ public class FlowersService {
                 .findFirst();
 
         if (flowerOptional.isPresent() && userOptional.isPresent()) {
-            GardenEntity gardenEntry = GardenEntity.builder()
-                    .flowerEntity(flowerOptional.get())
-                    .userEntity(userOptional.get())
-                    .build();
-
-            gardenRepository.save(gardenEntry);
+            gardenRepository.save(
+                    GardenEntity.builder()
+                            .gardenId(GardenIdEmbedded.builder()
+                                    .userId(userOptional.get().getId())
+                                    .flowerId(flowerOptional.get().getId())
+                                    .build())
+                            .flowerEntity(flowerOptional.get())
+                            .userEntity(userOptional.get())
+                            .build()
+            );
             return true;
         }
 
