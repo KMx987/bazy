@@ -27,25 +27,17 @@ public class FlowersService {
     private final FlowersRepository flowersRepository;
     private final UsersRepository usersRepository;
 
-    @Transactional(isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
+    @Transactional
     public List<Flower> getAllFlowers() {
         var allFlowers = flowersRepository.findAll().stream()
-                .map(flowerEntity ->
-                        Flower.builder().id(flowerEntity.getId()).name(flowerEntity.getName())
-                                .build())
+                .map(flowerEntity -> Flower.builder()
+                        .id(flowerEntity.getId())
+                        .name(flowerEntity.getName())
+                        .build())
                 .toList();
-        log.info("All flowers size before: {}", allFlowers.size());
-        try {
-            Thread.sleep(3_000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        allFlowers = flowersRepository.findAll().stream()
-                .map(flowerEntity ->
-                        Flower.builder().id(flowerEntity.getId()).name(flowerEntity.getName())
-                                .build())
-                .toList();
+
         log.info("All flowers size after: {}", allFlowers.size());
+
         return allFlowers;
     }
 
@@ -145,16 +137,26 @@ public class FlowersService {
 
     @Transactional
     public int saveNewFlower(String flowerName) {
-        var result =
-                flowersRepository.save(FlowerEntity.builder().name(flowerName)
-                        .build()).getId();
-        try {
-            Thread.sleep(1_000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        log.info("Flower saved with id: {}", result);
-        return result;
-    }
+        long nrOfFlowers = flowersRepository.count();
 
+        if (nrOfFlowers < 6) {
+            var result = flowersRepository.save(
+                    FlowerEntity.builder()
+                            .name(flowerName)
+                            .build()
+            ).getId();
+
+            try {
+                Thread.sleep(5_000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            log.info("Flower saved with id: {}", result);
+            return result;
+        }
+
+        log.info("Flower not saved, max number of flowers reached");
+        return -1;
+    }
 }
