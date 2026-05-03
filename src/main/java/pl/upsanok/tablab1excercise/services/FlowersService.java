@@ -22,23 +22,33 @@ import java.util.List;
 @Slf4j
 public class FlowersService {
 
-
     @Autowired
     private GardenRepository gardenRepository;
     private final FlowersRepository flowersRepository;
     private final UsersRepository usersRepository;
 
+    @Transactional(isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     public List<Flower> getAllFlowers() {
         var allFlowers = flowersRepository.findAll().stream()
-                .map(flowerEntity -> Flower.builder()
-                        .id(flowerEntity.getId())
-                        .name(flowerEntity.getName())
-                        .build())
+                .map(flowerEntity ->
+                        Flower.builder().id(flowerEntity.getId()).name(flowerEntity.getName())
+                                .build())
                 .toList();
-
-        log.info("All flowers size: {}", allFlowers.size());
+        log.info("All flowers size before: {}", allFlowers.size());
+        try {
+            Thread.sleep(3_000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        allFlowers = flowersRepository.findAll().stream()
+                .map(flowerEntity ->
+                        Flower.builder().id(flowerEntity.getId()).name(flowerEntity.getName())
+                                .build())
+                .toList();
+        log.info("All flowers size after: {}", allFlowers.size());
         return allFlowers;
     }
+
 
     public Flower getFavouriteFlowerForUser(String userName) {
         UserEntity user = usersRepository.findAll().stream()
@@ -139,11 +149,12 @@ public class FlowersService {
                 flowersRepository.save(FlowerEntity.builder().name(flowerName)
                         .build()).getId();
         try {
-            Thread.sleep(5_000);
+            Thread.sleep(1_000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         log.info("Flower saved with id: {}", result);
         return result;
     }
+
 }
