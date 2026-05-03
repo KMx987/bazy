@@ -52,4 +52,10 @@ public class FlowersImprovedController {
         var result = flowersService.getFavouriteFlowerForUser(userName);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("flowers/{newFlower}")
+    public ResponseEntity<Integer> saveNewFlower(@PathVariable String newFlower) {
+        int id = flowersService.saveNewFlower(newFlower);
+        return ResponseEntity.ok(id);
+    }
 }

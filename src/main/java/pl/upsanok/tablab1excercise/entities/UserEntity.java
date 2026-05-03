@@ -3,6 +3,9 @@ package pl.upsanok.tablab1excercise.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -10,41 +13,17 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class UserEntity {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "users_id")
-    private Integer id;
+    private int id;
 
-    @Column(name = "users_name")
+    @Column(name = "users_name", unique = true)
     private String name;
 
-    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_favourite_flower_id")
     private FlowerEntity favouriteFlower;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public FlowerEntity getFavouriteFlower() {
-        return favouriteFlower;
-    }
-
-    public void setFavouriteFlower(FlowerEntity favouriteFlower) {
-        this.favouriteFlower = favouriteFlower;
-    }
 }
